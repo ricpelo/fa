@@ -6,19 +6,13 @@
     </head>
     <body>
         <?php
+        require 'auxiliar.php';
+
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT) ?? false;
         try {
-            if ($id === false) {
-                throw new Exception('Parámetro incorrecto');
-            }
-            $pdo = new PDO('pgsql:host=localhost;dbname=fa', 'fa', 'fa');
-            $query = $pdo->query("SELECT *
-                                    FROM peliculas
-                                   WHERE id = $id");
-            $fila = $query->fetch();
-            if (empty($fila)) {
-                throw new Exception('La película no existe');
-            }
+            comprobarParametro($id);
+            $pdo = conectar();
+            $fila = buscarPelicula($pdo, $id);
             ?>
             <h3>
                 ¿Seguro que desea borrar la película <?= $fila['titulo'] ?>?
@@ -31,10 +25,7 @@
             </form>
             <?php
         } catch (Exception $e) {
-            ?>
-            <h3>Error: <?= $e->getMessage() ?></h3>
-            <a href="index.php">Volver</a>
-            <?php
+            mostrarErrores($e);
         }
         ?>
     </body>
