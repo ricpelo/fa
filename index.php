@@ -6,7 +6,9 @@
     </head>
     <body>
         <?php
-        $pdo = new PDO('pgsql:host=localhost;dbname=fa', 'fa', 'fa');
+        require 'auxiliar.php';
+
+        $pdo = conectar();
         $query = $pdo->query('SELECT * FROM peliculas');
         ?>
         <table border="1">
