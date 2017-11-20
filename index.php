@@ -55,7 +55,7 @@
                             <td><?= $fila['duracion'] ?></td>
                             <td><?= $fila['genero_id'] ?></td>
                             <td>
-                                <a href="borrar.php?id=<?= $fila['id'] ?>">
+                                <a href="borrar.php?id=<?= $fila['id'] ?>"
                                     Borrar
                                 </a>
                             </td>
@@ -64,5 +64,6 @@
                 </tbody>
             </table>
         </div>
+        <a href="insertar.php">Insertar una nueva película</a>
     </body>
 </html>
