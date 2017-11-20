@@ -14,7 +14,7 @@
     </head>
     <body>
         <?php
-        $titulo = filter_input(INPUT_GET, 'titulo') ?? '';
+        $titulo = trim(filter_input(INPUT_GET, 'titulo')) ?? '';
         ?>
         <div id="buscar">
             <form action="index.php" method="get">
@@ -31,7 +31,10 @@
         require 'auxiliar.php';
 
         $pdo = conectar();
-        $query = $pdo->query('SELECT * FROM peliculas');
+        $sent = $pdo->prepare("SELECT *
+                                 FROM peliculas
+                                WHERE lower(titulo) LIKE lower('%' || :titulo || '%')");
+        $sent->execute([':titulo' => $titulo]);
         ?>
         <div>
             <table border="1" id="tabla">
@@ -44,7 +47,7 @@
                     <th>Operaciones</th>
                 </thead>
                 <tbody>
-                    <?php foreach ($query as $fila): ?>
+                    <?php foreach ($sent as $fila): ?>
                         <tr>
                             <td><?= $fila['titulo'] ?></td>
                             <td><?= $fila['anyo'] ?></td>
