@@ -55,7 +55,7 @@
                             <td><?= $fila['duracion'] ?></td>
                             <td><?= $fila['genero_id'] ?></td>
                             <td>
-                                <a href="borrar.php?id=<?= $fila['id'] ?>"
+                                <a href="borrar.php?id=<?= $fila['id'] ?>">
                                     Borrar
                                 </a>
                             </td>

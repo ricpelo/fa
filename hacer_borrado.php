@@ -10,16 +10,18 @@
 
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT) ?? false;
         try {
-            comprobarParametro($id);
+            $error = [];
+            comprobarParametro($id, $error);
             $pdo = conectar();
-            buscarPelicula($pdo, $id);
-            borrarPelicula($pdo, $id);
+            buscarPelicula($pdo, $id, $error);
+            borrarPelicula($pdo, $id, $error);
+            comprobarErrores($error);
             ?>
             <h3>Película eliminada correctamente.</h3>
             <?php
             volver();
         } catch (Exception $e) {
-            mostrarErrores($e);
+            mostrarErrores($error);
         }
         ?>
     </body>
