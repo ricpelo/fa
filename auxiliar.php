@@ -89,7 +89,7 @@ function volver(): void
  * @param  string $cadena La cadena a escapar
  * @return string         La cadena escapada
  */
-function h(string $cadena): string
+function h(?string $cadena): string
 {
     return htmlspecialchars($cadena, ENT_QUOTES | ENT_SUBSTITUTE);
 }
@@ -132,7 +132,7 @@ function comprobarAnyo(string $anyo, array &$error): void
         ],
     ]);
     if ($filtro === false) {
-        $error[] = "No es un año válido";
+        $error[] = 'No es un año válido';
     }
 }
 
@@ -148,7 +148,27 @@ function comprobarDuracion(string $duracion, array &$error): void
         ],
     ]);
     if ($filtro === false) {
-        $error[] = "No es una duración válida";
+        $error[] = 'No es una duración válida';
+    }
+}
+
+function comprobarGenero(PDO $pdo, $genero_id, array &$error): void
+{
+    if ($genero_id === '') {
+        $error[] = 'El género es obligatorio';
+        return;
+    }
+    $filtro = filter_var($genero_id, FILTER_VALIDATE_INT);
+    if ($filtro === false) {
+        $error[] = 'El género debe ser un número entero';
+        return;
+    }
+    $sent = $pdo->prepare('SELECT COUNT(*)
+                             FROM generos
+                            WHERE id = :genero_id');
+    $sent->execute([':genero_id' => $genero_id]);
+    if ($sent->fetchColumn() === 0) {
+        $error[] = 'El género no existe';
     }
 }
 
@@ -157,4 +177,44 @@ function comprobarErrores(array $error): void
     if (!empty($error)) {
         throw new Exception;
     }
+}
+
+function insertar(
+    PDO $pdo,
+    $titulo,
+    $anyo,
+    $sinopsis,
+    $duracion,
+    $genero_id
+): void
+{
+    $sql = 'INSERT INTO peliculas
+                (titulo, anyo, sinopsis, duracion, genero_id)
+            VALUES (';
+    $exec = [];
+    $sql .= ':titulo, ';
+    $exec[':titulo'] = $titulo;
+    if ($anyo !== '') {
+        $sql .= ':anyo, ';
+        $exec[':anyo'] = $anyo;
+    } else {
+        $sql .= 'DEFAULT, ';
+    }
+    if ($sinopsis !== '') {
+        $sql .= ':sinopsis, ';
+        $exec[':sinopsis'] = $sinopsis;
+    } else {
+        $sql .= 'DEFAULT, ';
+    }
+    if ($duracion !== '') {
+        $sql .= ':duracion, ';
+        $exec[':duracion'] = $duracion;
+    } else {
+        $sql .= 'DEFAULT, ';
+    }
+    $sql .= ':genero_id';
+    $exec[':genero_id'] = $genero_id;
+    $sql .= ')';
+    $sent = $pdo->prepare($sql);
+    $sent->execute($exec);
 }
