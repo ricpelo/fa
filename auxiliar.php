@@ -199,8 +199,7 @@ function modificar(PDO $pdo, int $id, array $valores): void
     $sql = "UPDATE peliculas
                SET $set
              WHERE id = ?";
-    var_dump($sql);
-    $exec = array_filter(array_values($valores));
+    $exec = array_values(array_filter($valores));
     $exec[] = $id;
     $sent = $pdo->prepare($sql);
     $sent->execute($exec);
