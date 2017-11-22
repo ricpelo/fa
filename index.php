@@ -14,7 +14,7 @@
     </head>
     <body>
         <?php
-        $titulo = trim(filter_input(INPUT_GET, 'titulo')) ?? '';
+        $titulo = trim(filter_input(INPUT_GET, 'titulo'));
         ?>
         <div id="buscar">
             <form action="index.php" method="get">
