@@ -45,32 +45,15 @@
                     mostrarErrores($error);
                 }
             endif;
-            if (empty($_POST) || (!empty($_POST) && !empty($error))):
-            ?>
-                <form action="modificar.php?id=<?= $id ?>" method="post">
-                    <label for="titulo">Título*:</label>
-                    <input id="titulo" type="text" name="titulo"
-                        value="<?= h($titulo) ?>"><br>
-                    <label for="anyo">Año:</label>
-                    <input id="anyo" type="text" name="anyo"
-                        value="<?= h($anyo) ?>"><br>
-                    <label for="sinopsis">Sinopsis:</label>
-                    <textarea
-                        id="sinopsis"
-                        name="sinopsis"
-                        rows="8"
-                        cols="70"><?= h($sinopsis) ?></textarea><br>
-                    <label for="duracion">Duración:</label>
-                    <input id="duracion" type="text" name="duracion"
-                        value="<?= h($duracion) ?>"><br>
-                    <label for="genero_id">Género*:</label>
-                    <input id="genero_id" type="text" name="genero_id"
-                        value="<?= h($genero_id) ?>"><br>
-                    <input type="submit" value="Modificar">
-                    <a href="index.php">Cancelar</a>
-                </form>
-            <?php
-            endif;
+            if (empty($_POST) || (!empty($_POST) && !empty($error))) {
+                formulario(compact(
+                    'titulo',
+                    'anyo',
+                    'sinopsis',
+                    'duracion',
+                    'genero_id'
+                ), $id);
+            }
         } catch (Exception $e) {
             mostrarErrores($error);
         }
