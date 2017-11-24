@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -37,10 +38,8 @@
                         'genero_id'
                     );
                     modificar($pdo, $id, $valores);
-                    ?>
-                    <h3>La película se ha modificado correctamente.</h3>
-                    <?php
-                    volver();
+                    $_SESSION['mensaje'] = 'La película se ha modificado correctamente.';
+                    header('Location: index.php');
                 } catch (Exception $e) {
                     mostrarErrores($error);
                 }

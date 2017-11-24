@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,6 +8,8 @@
     <body>
         <?php
         require 'auxiliar.php';
+
+        $_SESSION['pepe'] = 'hola';
 
         $titulo    = trim(filter_input(INPUT_POST, 'titulo'));
         $anyo      = trim(filter_input(INPUT_POST, 'anyo'));
@@ -31,10 +34,8 @@
                     'genero_id'
                 ), 'comp');
                 insertar($pdo, $valores);
-                ?>
-                <h3>La película se ha insertado correctamente.</h3>
-                <?php
-                volver();
+                $_SESSION['mensaje'] = 'La película se ha insertado correctamente.';
+                header('Location: index.php');
             } catch (Exception $e) {
                 mostrarErrores($error);
             }

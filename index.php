@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,8 +10,10 @@
         <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
         <style type="text/css">
-            fieldset {
+            .container {
                 margin-top: 24px;
+            }
+            fieldset {
                 margin-bottom: 24px;
             }
             #buscar {
@@ -24,6 +27,15 @@
         $titulo = trim(filter_input(INPUT_GET, 'titulo'));
         ?>
         <div class="container">
+            <?php if (isset($_SESSION['mensaje'])): ?>
+                <div class="row">
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <?= $_SESSION['mensaje'] ?>
+                    </div>
+                </div>
+                <?php unset($_SESSION['mensaje']) ?>
+            <?php endif ?>
             <div class="row">
                 <div id="buscar">
                     <form action="index.php" method="get" class="form-inline">
