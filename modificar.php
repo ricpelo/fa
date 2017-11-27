@@ -40,19 +40,18 @@
                     modificar($pdo, $id, $valores);
                     $_SESSION['mensaje'] = 'La película se ha modificado correctamente.';
                     header('Location: index.php');
+                    return;
                 } catch (Exception $e) {
                     mostrarErrores($error);
                 }
             endif;
-            if (empty($_POST) || (!empty($_POST) && !empty($error))) {
-                formulario(compact(
-                    'titulo',
-                    'anyo',
-                    'sinopsis',
-                    'duracion',
-                    'genero_id'
-                ), $id);
-            }
+            formulario(compact(
+                'titulo',
+                'anyo',
+                'sinopsis',
+                'duracion',
+                'genero_id'
+            ), $id);
         } catch (Exception $e) {
             mostrarErrores($error);
         }

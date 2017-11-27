@@ -5,9 +5,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
         <style type="text/css">
             .container {
@@ -24,9 +22,19 @@
     </head>
     <body>
         <?php
-        $titulo = trim(filter_input(INPUT_GET, 'titulo'));
+        require 'auxiliar.php';
         ?>
         <div class="container">
+            <div class="row">
+                <div class="pull-right">
+                    <?php if (isset($_SESSION['usuario'])): ?>
+                        <?= $_SESSION['usuario']['nombre'] ?>
+                        <a class="btn btn-info" href="logout.php">Logout</a>
+                    <?php else: ?>
+                        <a class="btn btn-info" href="login.php">Login</a>
+                    <?php endif ?>
+                </div>
+            </div>
             <?php if (isset($_SESSION['mensaje'])): ?>
                 <div class="row">
                     <div class="alert alert-success alert-dismissible" role="alert">
@@ -36,25 +44,27 @@
                 </div>
                 <?php unset($_SESSION['mensaje']) ?>
             <?php endif ?>
+            <?php
+            $titulo = trim(filter_input(INPUT_GET, 'titulo'));
+            ?>
             <div class="row">
-                <div id="buscar">
-                    <form action="index.php" method="get" class="form-inline">
-                        <fieldset>
-                            <legend>Buscar</legend>
+                <hr>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Buscar</div>
+                    <div class="panel-body">
+                        <form action="index.php" method="get" class="form-inline">
                             <div class="form-group">
-                                <label for="titulo">Título:</label>
+                                <label for="titulo">Título</label>
                                 <input id="titulo" class="form-control" type="text" name="titulo"
-                                       value="<?= $titulo ?>">
+                                       value="<?= h($titulo) ?>">
                             </div>
                             <input type="submit" class="btn btn-default" value="Buscar">
-                        </fieldset>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <?php
-                require 'auxiliar.php';
-
                 $pdo = conectar();
                 $sent = $pdo->prepare("SELECT peliculas.id,
                                               titulo,
@@ -108,9 +118,7 @@
                 </div>
             </div>
         </div>
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     </body>
 </html>
