@@ -31,7 +31,7 @@
                     $fila = buscarUsuario($usuario, $password, $error);
                     $_SESSION['usuario'] = [
                         'id' => $fila['id'],
-                        'nombre' => $fila['nombre'],
+                        'nombre' => $fila['usuario'],
                     ];
                     header('Location: index.php');
                 } catch (Exception $e) {

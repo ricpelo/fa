@@ -22,22 +22,19 @@
     </head>
     <body>
         <?php
-        $titulo = trim(filter_input(INPUT_GET, 'titulo'));
+        require 'auxiliar.php';
         ?>
         <div class="container">
-            <?php if (isset($_SESSION['usuario'])): ?>
-                <div class="row">
-                    <div class="col-md-offset-10 col-md-2">
-                        <a class="btn btn-info" href="login.php">Logout</a>
-                    </div>
-                </div>
-            <?php else: ?>
-                <div class="row">
-                    <div class="col-md-offset-10 col-md-2">
+            <div class="row">
+                <div class="pull-right">
+                    <?php if (isset($_SESSION['usuario'])): ?>
+                        <?= $_SESSION['usuario']['nombre'] ?>
+                        <a class="btn btn-info" href="logout.php">Logout</a>
+                    <?php else: ?>
                         <a class="btn btn-info" href="login.php">Login</a>
-                    </div>
+                    <?php endif ?>
                 </div>
-            <?php endif ?>
+            </div>
             <?php if (isset($_SESSION['mensaje'])): ?>
                 <div class="row">
                     <div class="alert alert-success alert-dismissible" role="alert">
@@ -47,25 +44,27 @@
                 </div>
                 <?php unset($_SESSION['mensaje']) ?>
             <?php endif ?>
+            <?php
+            $titulo = trim(filter_input(INPUT_GET, 'titulo'));
+            ?>
             <div class="row">
-                <div id="buscar">
-                    <form action="index.php" method="get" class="form-inline">
-                        <fieldset>
-                            <legend>Buscar</legend>
+                <hr>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Buscar</div>
+                    <div class="panel-body">
+                        <form action="index.php" method="get" class="form-inline">
                             <div class="form-group">
-                                <label for="titulo">Título:</label>
+                                <label for="titulo">Título</label>
                                 <input id="titulo" class="form-control" type="text" name="titulo"
-                                       value="<?= $titulo ?>">
+                                       value="<?= h($titulo) ?>">
                             </div>
                             <input type="submit" class="btn btn-default" value="Buscar">
-                        </fieldset>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <?php
-                require 'auxiliar.php';
-
                 $pdo = conectar();
                 $sent = $pdo->prepare("SELECT peliculas.id,
                                               titulo,

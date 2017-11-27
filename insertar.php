@@ -9,8 +9,6 @@
         <?php
         require 'auxiliar.php';
 
-        $_SESSION['pepe'] = 'hola';
-
         $titulo    = trim(filter_input(INPUT_POST, 'titulo'));
         $anyo      = trim(filter_input(INPUT_POST, 'anyo'));
         $sinopsis  = trim(filter_input(INPUT_POST, 'sinopsis'));
@@ -36,19 +34,18 @@
                 insertar($pdo, $valores);
                 $_SESSION['mensaje'] = 'La película se ha insertado correctamente.';
                 header('Location: index.php');
+                return;
             } catch (Exception $e) {
                 mostrarErrores($error);
             }
         endif;
-        if (empty($_POST) || (!empty($_POST) && !empty($error))) {
-            formulario(compact(
-                'titulo',
-                'anyo',
-                'sinopsis',
-                'duracion',
-                'genero_id'
-            ), null);
-        }
+        formulario(compact(
+            'titulo',
+            'anyo',
+            'sinopsis',
+            'duracion',
+            'genero_id'
+        ), null);
         ?>
     </body>
 </html>
