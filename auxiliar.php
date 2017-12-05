@@ -214,7 +214,7 @@ function modificar(PDO $pdo, int $id, array $valores): void
     $sent->execute($exec);
 }
 
-function formulario(array $datos, ?int $id): void
+function formulario(array $datos, ?int $id, PDO $pdo): void
 {
     if ($id === null) {
         $destino = 'insertar.php';
@@ -225,29 +225,72 @@ function formulario(array $datos, ?int $id): void
     }
     extract($datos);
     ?>
-    <form action="<?= $destino ?>" method="post">
-        <label for="titulo">Título*:</label>
-        <input id="titulo" type="text" name="titulo"
-            value="<?= h($titulo) ?>"><br>
-        <label for="anyo">Año:</label>
-        <input id="anyo" type="text" name="anyo"
-            value="<?= h($anyo) ?>"><br>
-        <label for="sinopsis">Sinopsis:</label>
-        <textarea
-            id="sinopsis"
-            name="sinopsis"
-            rows="8"
-            cols="70"><?= h($sinopsis) ?></textarea><br>
-        <label for="duracion">Duración:</label>
-        <input id="duracion" type="text" name="duracion"
-            value="<?= h($duracion) ?>"><br>
-        <label for="genero_id">Género*:</label>
-        <input id="genero_id" type="text" name="genero_id"
-            value="<?= h($genero_id) ?>"><br>
-        <input type="submit" value="<?= $boton ?>">
-        <a href="index.php">Cancelar</a>
-    </form>
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading"><?= $boton ?> una película</div>
+                <div class="panel-body">
+                    <form action="<?= $destino ?>" method="post">
+                        <div class="form-group">
+                            <label for="titulo">Título*</label>
+                            <input id="titulo" class="form-control"
+                                type="text" name="titulo"
+                                value="<?= h($titulo) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="anyo">Año:</label>
+                            <input id="anyo" class="form-control"
+                                type="text" name="anyo"
+                                value="<?= h($anyo) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="sinopsis">Sinopsis:</label>
+                            <textarea
+                                id="sinopsis"
+                                class="form-control"
+                                name="sinopsis"
+                                rows="8"
+                                cols="70"><?= h($sinopsis) ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="duracion">Duración:</label>
+                            <input id="duracion" class="form-control"
+                                type="text" name="duracion"
+                                value="<?= h($duracion) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="genero_id">Género*</label>
+                            <select class="form-control" name="genero_id">
+                                <?php generoOptions($genero_id, $pdo) ?>
+                            </select>
+                        </div>
+                        <input type="submit" class="btn btn-success" value="<?= $boton ?>">
+                        <a href="index.php" class="btn btn-default">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <?php
+}
+
+function generoOptions($genero_id, $pdo)
+{
+    $sent = $pdo->query('SELECT id, genero FROM generos');
+    $res = '';
+    foreach ($sent as $fila):
+        ?>
+        <option <?= selected($fila['id'], $genero_id) ?>
+            value="<?= $fila['id'] ?>">
+            <?= $fila['genero'] ?>
+        </option>
+        <?php
+    endforeach;
+}
+
+function selected($x, $y)
+{
+    return $x === $y ? 'selected' : '';
 }
 
 function recogerParametros()
@@ -314,4 +357,65 @@ function comprobarLogueado(): bool
     }
 
     return true;
+}
+
+function cabecera($title = '')
+{
+    session_start();
+    ?>
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+            <style type="text/css">
+                .container {
+                    margin-top: 24px;
+                }
+                fieldset {
+                    margin-bottom: 24px;
+                }
+                #buscar {
+                    margin-bottom: 12px;
+                }
+            </style>
+            <title><?= $title ?></title>
+        </head>
+        <body>
+            <div class="container">
+                <div class="row">
+                    <div class="pull-right">
+                        <?php if (isset($_SESSION['usuario'])): ?>
+                            <?= $_SESSION['usuario']['nombre'] ?>
+                            <a class="btn btn-info" href="logout.php">Logout</a>
+                        <?php else: ?>
+                            <a class="btn btn-info" href="login.php">Login</a>
+                        <?php endif ?>
+                    </div>
+                </div>
+                <hr>
+                <?php if (isset($_SESSION['mensaje'])): ?>
+                    <div class="row">
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <?= $_SESSION['mensaje'] ?>
+                        </div>
+                    </div>
+                    <?php unset($_SESSION['mensaje']) ?>
+                <?php endif ?>
+    <?php
+}
+
+function pie()
+{
+    ?>
+            </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        </body>
+    </html>
+    <?php
 }
