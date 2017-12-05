@@ -1,5 +1,26 @@
 <?php
 
+const PELICULA_DEFECTO = [
+    'titulo' => '',
+    'anyo' => '',
+    'sinopsis' => '',
+    'duracion' => '',
+    'genero_id' => '',
+];
+
+function obtenerParametro(string $parametro, array $defecto): array
+{
+    $ret = filter_input(
+        INPUT_POST,
+        $parametro,
+        FILTER_DEFAULT,
+        FILTER_REQUIRE_ARRAY
+    ) ?? [];
+    $ret = array_map('trim', $ret);
+    $ret = array_merge($defecto, $ret);
+    return $ret;
+}
+
 /**
  * Crea una conexión a la base de datos y la devuelve.
  * @return PDO          La instancia de la clase PDO que representa la conexión
@@ -234,13 +255,13 @@ function formulario(array $datos, ?int $id, PDO $pdo): void
                         <div class="form-group">
                             <label for="titulo">Título*</label>
                             <input id="titulo" class="form-control"
-                                type="text" name="titulo"
+                                type="text" name="pelicula[titulo]"
                                 value="<?= h($titulo) ?>">
                         </div>
                         <div class="form-group">
                             <label for="anyo">Año:</label>
                             <input id="anyo" class="form-control"
-                                type="text" name="anyo"
+                                type="text" name="pelicula[anyo]"
                                 value="<?= h($anyo) ?>">
                         </div>
                         <div class="form-group">
@@ -248,19 +269,19 @@ function formulario(array $datos, ?int $id, PDO $pdo): void
                             <textarea
                                 id="sinopsis"
                                 class="form-control"
-                                name="sinopsis"
+                                name="pelicula[sinopsis]"
                                 rows="8"
                                 cols="70"><?= h($sinopsis) ?></textarea>
                         </div>
                         <div class="form-group">
                             <label for="duracion">Duración:</label>
                             <input id="duracion" class="form-control"
-                                type="text" name="duracion"
+                                type="text" name="pelicula[duracion]"
                                 value="<?= h($duracion) ?>">
                         </div>
                         <div class="form-group">
                             <label for="genero_id">Género*</label>
-                            <select class="form-control" name="genero_id">
+                            <select class="form-control" name="pelicula[genero_id]">
                                 <?php generoOptions($genero_id, $pdo) ?>
                             </select>
                         </div>
@@ -290,7 +311,7 @@ function generoOptions($genero_id, $pdo)
 
 function selected($x, $y)
 {
-    return $x === $y ? 'selected' : '';
+    return $x == $y ? 'selected' : '';
 }
 
 function recogerParametros()

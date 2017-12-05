@@ -6,28 +6,17 @@ if (!comprobarLogueado()) {
     return;
 }
 
-$titulo    = trim(filter_input(INPUT_POST, 'titulo'));
-$anyo      = trim(filter_input(INPUT_POST, 'anyo'));
-$sinopsis  = trim(filter_input(INPUT_POST, 'sinopsis'));
-$duracion  = trim(filter_input(INPUT_POST, 'duracion'));
-$genero_id = trim(filter_input(INPUT_POST, 'genero_id'));
-// recogerParametros();
+$pelicula = obtenerParametro('pelicula', PELICULA_DEFECTO);
 $error = [];
 $pdo = conectar();
 if (!empty($_POST)):
     try {
-        comprobarTitulo($titulo, $error);
-        comprobarAnyo($anyo, $error);
-        comprobarDuracion($duracion, $error);
-        comprobarGenero($pdo, $genero_id, $error);
+        comprobarTitulo($pelicula['titulo'], $error);
+        comprobarAnyo($pelicula['anyo'], $error);
+        comprobarDuracion($pelicula['duracion'], $error);
+        comprobarGenero($pdo, $pelicula['genero_id'], $error);
         comprobarErrores($error);
-        $valores = array_filter(compact(
-            'titulo',
-            'anyo',
-            'sinopsis',
-            'duracion',
-            'genero_id'
-        ), 'comp');
+        $valores = array_filter($pelicula, 'comp');
         insertar($pdo, $valores);
         $_SESSION['mensaje'] = 'La película se ha insertado correctamente.';
         header('Location: index.php');
@@ -36,12 +25,6 @@ if (!empty($_POST)):
         mostrarErrores($error);
     }
 endif;
-formulario(compact(
-    'titulo',
-    'anyo',
-    'sinopsis',
-    'duracion',
-    'genero_id'
-), null, $pdo);
+formulario($pelicula, null, $pdo);
 pie();
 ?>
