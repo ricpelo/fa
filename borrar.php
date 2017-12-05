@@ -20,23 +20,7 @@ try {
         header('Location: index.php');
         return;
     }
-    ?>
-    <div class="row">
-        <div class="col-md-offset-3 col-md-6">
-            <div class="panel panel-danger">
-                <div class="panel-heading">
-                    ¿Borrar la película <?= $fila['titulo'] ?>?
-                </div>
-                <div class="panel-body">
-                    <form action="borrar.php?id=<?= $id ?>" method="post">
-                        <input class="btn btn-success" type="submit" value="Sí">
-                        <a class="btn btn-default" href="index.php">No</a>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <?php
+    formularioConfirmarBorrado($id, $fila['titulo']);
 } catch (Exception $e) {
     $_SESSION['mensaje'] = $error[0];
     header('Location: index.php');

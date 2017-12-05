@@ -411,6 +411,7 @@ function cabecera($title = '')
                     <div class="pull-right">
                         <?php if (isset($_SESSION['usuario'])): ?>
                             <?= $_SESSION['usuario']['nombre'] ?>
+                            <a class="btn btn-info" href="cambiar-password.php">Cambiar contraseña</a>
                             <a class="btn btn-info" href="logout.php">Logout</a>
                         <?php else: ?>
                             <a class="btn btn-info" href="login.php">Login</a>
@@ -438,5 +439,72 @@ function pie()
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         </body>
     </html>
+    <?php
+}
+
+function comprobarPasswordConfirm(string $passwordConfirm, string $password, array &$error): void
+{
+    if ($passwordConfirm === '') {
+        $error[] = 'La confirmación de contraseña no puede ser vacía.';
+        return;
+    }
+    if ($passwordConfirm !== $password) {
+        $error[] = 'Las contraseñas no coinciden.';
+    }
+}
+
+function cambiarPassword($password)
+{
+    $pdo = conectar();
+    $sent = $pdo->prepare('UPDATE usuarios
+                              SET password = :password
+                            WHERE id = :id');
+    $sent->execute([
+        ':password' => password_hash($password, PASSWORD_DEFAULT),
+        ':id' => $_SESSION['usuario']['id'],
+    ]);
+}
+
+function formularioRecordarPassword()
+{
+    ?>
+    <div class="row">
+        <div class="col-md-offset-4 col-md-4">
+            <form method="post">
+                <div class="form-group">
+                    <label for="password">Contraseña*</label>
+                    <input id="password" class="form-control"
+                        type="password" name="usuario[password]">
+                </div>
+                <div class="form-group">
+                    <label for="passwordConfirm">Confirmar contraseña*</label>
+                    <input id="passwordConfirm" class="form-control"
+                        type="password" name="usuario[passwordConfirm]">
+                </div>
+                <input type="submit" class="btn btn-success" value="Cambiar">
+            </form>
+        </div>
+    </div>
+    <?php
+}
+
+function formularioConfirmarBorrado($id, $titulo)
+{
+    ?>
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    ¿Borrar la película <?= $titulo ?>?
+                </div>
+                <div class="panel-body">
+                    <form action="borrar.php?id=<?= $id ?>" method="post">
+                        <input class="btn btn-success" type="submit" value="Sí">
+                        <a class="btn btn-default" href="index.php">No</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <?php
 }

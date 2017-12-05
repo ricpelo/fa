@@ -27,4 +27,3 @@ if (!empty($_POST)):
 endif;
 formulario($pelicula, null, $pdo);
 pie();
-?>
