@@ -396,9 +396,6 @@ function cabecera($title = '')
                 .container {
                     margin-top: 24px;
                 }
-                fieldset {
-                    margin-bottom: 24px;
-                }
                 #buscar {
                     margin-bottom: 12px;
                 }
@@ -411,14 +408,14 @@ function cabecera($title = '')
                     <div class="pull-right">
                         <?php if (isset($_SESSION['usuario'])): ?>
                             <?= $_SESSION['usuario']['nombre'] ?>
-                            <a class="btn btn-info" href="cambiar-password.php">Cambiar contraseña</a>
-                            <a class="btn btn-info" href="logout.php">Logout</a>
+                            <a class="btn btn-info" href="usuarios/cambiar-password.php">Cambiar contraseña</a>
+                            <a class="btn btn-info" href="usuarios/logout.php">Logout</a>
                         <?php else: ?>
-                            <a class="btn btn-info" href="login.php">Login</a>
+                            <a class="btn btn-info" href="usuarios/login.php">Login</a>
                         <?php endif ?>
                     </div>
                 </div>
-                <hr>
+                <div class="row"><hr></div>
                 <?php if (isset($_SESSION['mensaje'])): ?>
                     <div class="row">
                         <div class="alert alert-success alert-dismissible" role="alert">
@@ -482,6 +479,7 @@ function formularioRecordarPassword()
                         type="password" name="usuario[passwordConfirm]">
                 </div>
                 <input type="submit" class="btn btn-success" value="Cambiar">
+                <a class="btn btn-default" href="../index.php">Volver</a>
             </form>
         </div>
     </div>

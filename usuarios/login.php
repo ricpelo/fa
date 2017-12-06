@@ -1,5 +1,7 @@
 <?php
-require 'auxiliar.php';
+
+require '../auxiliar.php';
+
 cabecera('Login');
 
 $usuario = trim(filter_input(INPUT_POST, 'usuario'));

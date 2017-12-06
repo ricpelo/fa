@@ -1,21 +1,25 @@
 <?php
+
 require 'auxiliar.php';
+
 cabecera('Listado de películas');
 
 $titulo = trim(filter_input(INPUT_GET, 'titulo'));
 ?>
 <div class="row">
-    <div class="panel panel-default">
-        <div class="panel-heading">Buscar</div>
-        <div class="panel-body">
-            <form action="index.php" method="get" class="form-inline">
-                <div class="form-group">
-                    <label for="titulo">Título</label>
-                    <input id="titulo" class="form-control" type="text" name="titulo"
-                           value="<?= h($titulo) ?>">
-                </div>
-                <input type="submit" class="btn btn-default" value="Buscar">
-            </form>
+    <div class="col-md-offset-2 col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Buscar</div>
+            <div class="panel-body">
+                <form action="index.php" method="get" class="form-inline">
+                    <div class="form-group">
+                        <label for="titulo">Título</label>
+                        <input id="titulo" class="form-control" type="text" name="titulo"
+                               value="<?= h($titulo) ?>">
+                    </div>
+                    <input type="submit" class="btn btn-default" value="Buscar">
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -69,7 +73,7 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
     </div>
 </div>
 <div class="row">
-    <div class="col-md-offset-4 col-md-4">
+    <div class="text-center">
         <a class="btn btn-default" href="insertar.php">Insertar una nueva película</a>
     </div>
 </div>

@@ -1,6 +1,6 @@
 <?php
 
-require './auxiliar.php';
+require '../auxiliar.php';
 
 cabecera('Cambiar contraseña');
 

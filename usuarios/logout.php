@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require 'auxiliar.php';
+require '../auxiliar.php';
 
 if (!comprobarLogueado()) {
     return;
