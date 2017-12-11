@@ -18,6 +18,7 @@ function obtenerParametro(string $parametro, array $defecto): array
     ) ?? [];
     $ret = array_map('trim', $ret);
     $ret = array_merge($defecto, $ret);
+    $ret = array_intersect_key($ret, $defecto);
     return $ret;
 }
 
