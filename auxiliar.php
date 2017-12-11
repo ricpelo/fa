@@ -8,6 +8,8 @@ const PELICULA_DEFECTO = [
     'genero_id' => '',
 ];
 
+define('FPP', 4);
+
 function obtenerParametro(string $parametro, array $defecto): array
 {
     $ret = filter_input(
@@ -503,6 +505,37 @@ function formularioConfirmarBorrado($id, $titulo)
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+    <?php
+}
+
+function paginador($pag, $numPags)
+{
+    ?>
+    <div class="row">
+        <div class="text-center">
+            <?php if ($pag > 1): ?>
+                <a href="index.php?pag=<?= $pag - 1 ?>">&lt;</a>
+            <?php else: ?>
+                &lt;
+            <?php endif ?>
+            <?php
+            for ($p = 1; $p <= $numPags; $p++):
+            ?>
+                <?php if ($pag != $p): ?>
+                    <a href="index.php?pag=<?= $p ?>"><?= $p ?></a>
+                <?php else: ?>
+                    <?= $p ?>
+                <?php endif ?>
+            <?php
+            endfor;
+            ?>
+            <?php if ($pag < $numPags): ?>
+                <a href="index.php?pag=<?= $pag + 1 ?>">&gt;</a>
+            <?php else: ?>
+                &gt;
+            <?php endif ?>
         </div>
     </div>
     <?php

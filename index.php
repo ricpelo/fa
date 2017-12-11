@@ -26,6 +26,21 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
 <div class="row">
     <?php
     $pdo = conectar();
+    $clausulas = "FROM peliculas
+                  JOIN generos ON genero_id = generos.id
+                 WHERE lower(titulo) LIKE lower('%' || :titulo || '%')";
+    $sent = $pdo->prepare("SELECT count(*)
+                                  $clausulas");
+    $sent->execute([':titulo' => $titulo]);
+    $numFilas = $sent->fetchColumn();
+    $numPags = ceil($numFilas / FPP);
+    $pag = filter_input(INPUT_GET, 'pag', FILTER_VALIDATE_INT, [
+        'options' => [
+            'default' => 1,
+            'min_range' => 1,
+            'max_range' => $numPags,
+        ],
+    ]);
     $sent = $pdo->prepare("SELECT peliculas.id,
                                   titulo,
                                   anyo,
@@ -33,14 +48,20 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
                                   duracion,
                                   genero_id,
                                   genero
-                             FROM peliculas
-                             JOIN generos ON genero_id = generos.id
-                            WHERE lower(titulo) LIKE lower('%' || :titulo || '%')");
-    $sent->execute([':titulo' => $titulo]);
+                                  $clausulas
+                         ORDER BY id
+                            LIMIT :limit
+                           OFFSET :offset");
+    $sent->execute([
+        ':titulo' => $titulo,
+        ':limit' => FPP,
+        ':offset' => ($pag - 1) * FPP,
+    ]);
     ?>
     <div class="col-md-offset-1 col-md-10">
         <table id="tabla" class="table table-striped">
             <thead>
+                <th>Id</th>
                 <th>Título</th>
                 <th>Año</th>
                 <th>Sinopsis</th>
@@ -51,6 +72,7 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
             <tbody>
                 <?php foreach ($sent as $fila): ?>
                     <tr>
+                        <td><?= h($fila['id']) ?></td>
                         <td><?= h($fila['titulo']) ?></td>
                         <td><?= h($fila['anyo']) ?></td>
                         <td><?= h($fila['sinopsis']) ?></td>
@@ -72,6 +94,7 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
         </table>
     </div>
 </div>
+<?php paginador($pag, $numPags) ?>
 <div class="row">
     <div class="text-center">
         <a class="btn btn-default" href="insertar.php">Insertar una nueva película</a>
