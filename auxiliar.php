@@ -510,15 +510,18 @@ function formularioConfirmarBorrado($id, $titulo)
     <?php
 }
 
-function paginador($pag, $numPags)
+function paginador($pag, $numPags, $titulo)
 {
     ?>
     <div class="row">
         <div class="text-center">
             <ul class="pagination">
-                <?php if ($pag > 1): ?>
+                <?php if ($pag > 1):
+                    $p = $pag - 1;
+                    $url = "index.php?pag=$p&titulo=$titulo";
+                    ?>
                     <li>
-                        <a href="index.php?pag=<?= $pag - 1 ?>" aria-label="Previous">
+                        <a href="<?= $url ?>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
@@ -529,16 +532,20 @@ function paginador($pag, $numPags)
                 <?php endif ?>
                 <?php
                 for ($p = 1; $p <= $numPags; $p++):
+                    $url = "index.php?pag=$p&titulo=$titulo";
                     ?>
                     <li <?= $pag == $p ? 'class="active"' : '' ?> >
-                        <a href="index.php?pag=<?= $p ?>"><?= $p ?></a>
+                        <a href="<?= $url ?>"><?= $p ?></a>
                     </li>
                     <?php
                 endfor;
                 ?>
-                <?php if ($pag < $numPags): ?>
+                <?php if ($pag < $numPags):
+                    $p = $pag + 1;
+                    $url = "index.php?pag=$p&titulo=$titulo";
+                    ?>
                     <li>
-                        <a href="index.php?pag=<?= $pag + 1 ?>" aria-label="Next">
+                        <a href="<?= $url ?>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>

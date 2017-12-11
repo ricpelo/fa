@@ -94,7 +94,7 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
         </table>
     </div>
 </div>
-<?php paginador($pag, $numPags) ?>
+<?php paginador($pag, $numPags, $titulo) ?>
 <div class="row">
     <div class="text-center">
         <a class="btn btn-default" href="insertar.php">Insertar una nueva película</a>
