@@ -515,27 +515,39 @@ function paginador($pag, $numPags)
     ?>
     <div class="row">
         <div class="text-center">
-            <?php if ($pag > 1): ?>
-                <a href="index.php?pag=<?= $pag - 1 ?>">&lt;</a>
-            <?php else: ?>
-                &lt;
-            <?php endif ?>
-            <?php
-            for ($p = 1; $p <= $numPags; $p++):
-            ?>
-                <?php if ($pag != $p): ?>
-                    <a href="index.php?pag=<?= $p ?>"><?= $p ?></a>
+            <ul class="pagination">
+                <?php if ($pag > 1): ?>
+                    <li>
+                        <a href="index.php?pag=<?= $pag - 1 ?>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
                 <?php else: ?>
-                    <?= $p ?>
+                    <li class="disabled">
+                        <span aria-hidden="true">&laquo;</span>
+                    </li>
                 <?php endif ?>
-            <?php
-            endfor;
-            ?>
-            <?php if ($pag < $numPags): ?>
-                <a href="index.php?pag=<?= $pag + 1 ?>">&gt;</a>
-            <?php else: ?>
-                &gt;
-            <?php endif ?>
+                <?php
+                for ($p = 1; $p <= $numPags; $p++):
+                    ?>
+                    <li <?= $pag == $p ? 'class="active"' : '' ?> >
+                        <a href="index.php?pag=<?= $p ?>"><?= $p ?></a>
+                    </li>
+                    <?php
+                endfor;
+                ?>
+                <?php if ($pag < $numPags): ?>
+                    <li>
+                        <a href="index.php?pag=<?= $pag + 1 ?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="disabled">
+                        <span aria-hidden="true">&raquo;</span>
+                    </li>
+                <?php endif ?>
+            </ul>
         </div>
     </div>
     <?php
