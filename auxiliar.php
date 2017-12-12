@@ -518,14 +518,14 @@ function formularioConfirmarBorrado($id, $titulo)
     <?php
 }
 
-function paginador($pag, $numPags, $columna, $criterio)
+function paginador($pag, $numPags, $columna, $criterio, $orden)
 {
     ?>
     <div class="row">
         <div class="text-center">
             <ul class="pagination">
                 <?php if ($pag > 1):
-                    $url = generaUrl($pag - 1, $columna, $criterio);
+                    $url = generaUrl($pag - 1, $columna, $criterio, $orden);
                     ?>
                     <li>
                         <a href="<?= $url ?>" aria-label="Previous">
@@ -539,7 +539,7 @@ function paginador($pag, $numPags, $columna, $criterio)
                 <?php endif ?>
                 <?php
                 for ($p = 1; $p <= $numPags; $p++):
-                    $url = generaUrl($p, $columna, $criterio);
+                    $url = generaUrl($p, $columna, $criterio, $orden);
                     ?>
                     <li <?= $pag == $p ? 'class="active"' : '' ?> >
                         <a href="<?= $url ?>"><?= $p ?></a>
@@ -548,7 +548,7 @@ function paginador($pag, $numPags, $columna, $criterio)
                 endfor;
                 ?>
                 <?php if ($pag < $numPags):
-                    $url = generaUrl($pag + 1, $columna, $criterio);
+                    $url = generaUrl($pag + 1, $columna, $criterio, $orden);
                     ?>
                     <li>
                         <a href="<?= $url ?>" aria-label="Next">
@@ -566,11 +566,14 @@ function paginador($pag, $numPags, $columna, $criterio)
     <?php
 }
 
-function generaUrl($pag, $columna, $criterio)
+function generaUrl($pag, $columna, $criterio, $orden)
 {
     $url = "index.php?pag=$pag";
     if ($columna !== '' && $criterio !== '' ) {
         $url .= "&columna=$columna&criterio=$criterio";
+    }
+    if ($orden !== '') {
+        $url .= "&orden=$orden";
     }
     return $url;
 }

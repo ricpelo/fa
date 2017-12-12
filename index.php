@@ -6,6 +6,7 @@ cabecera('Listado de películas');
 
 $columna = trim(filter_input(INPUT_GET, 'columna'));
 $criterio = trim(filter_input(INPUT_GET, 'criterio'));
+$orden = trim(filter_input(INPUT_GET, 'orden') ?: 'titulo');
 ?>
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
@@ -64,6 +65,11 @@ $criterio = trim(filter_input(INPUT_GET, 'criterio'));
                 break;
         }
     }
+    if (!isset(COLUMNAS[$orden])) {
+        header('Location: index.php');
+        return;
+    }
+    $orderBy = $orden == 'genero_id' ? 'genero' : $orden;
     $pdo = conectar();
     $sent = $pdo->prepare("SELECT count(*)
                                   $clausulas");
@@ -85,7 +91,7 @@ $criterio = trim(filter_input(INPUT_GET, 'criterio'));
                                   genero_id,
                                   genero
                                   $clausulas
-                         ORDER BY id
+                         ORDER BY $orderBy
                             LIMIT :limit
                            OFFSET :offset");
     $sent->execute($params + [
@@ -97,11 +103,13 @@ $criterio = trim(filter_input(INPUT_GET, 'criterio'));
         <table id="tabla" class="table table-striped">
             <thead>
                 <th>Id</th>
-                <th>Título</th>
-                <th>Año</th>
-                <th>Sinopsis</th>
-                <th>Duración</th>
-                <th>Género</th>
+                <?php foreach (COLUMNAS as $k => $v): ?>
+                    <th>
+                        <a href="<?= generaUrl($pag, $columna, $criterio, $k) ?>">
+                            <?= $v ?> <?= $k == $orden ? '<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>' : '' ?>
+                        </a>
+                    </th>
+                <?php endforeach ?>
                 <th colspan="2">Operaciones</th>
             </thead>
             <tbody>
@@ -129,7 +137,7 @@ $criterio = trim(filter_input(INPUT_GET, 'criterio'));
         </table>
     </div>
 </div>
-<?php paginador($pag, $numPags, $columna, $criterio) ?>
+<?php paginador($pag, $numPags, $columna, $criterio, $orden) ?>
 <div class="row">
     <div class="text-center">
         <a class="btn btn-default" href="insertar.php">Insertar una nueva película</a>
