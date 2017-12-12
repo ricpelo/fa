@@ -4,9 +4,10 @@ require 'auxiliar.php';
 
 cabecera('Listado de películas');
 
-$columna = trim(filter_input(INPUT_GET, 'columna'));
+$columna  = trim(filter_input(INPUT_GET, 'columna'));
 $criterio = trim(filter_input(INPUT_GET, 'criterio'));
-$orden = trim(filter_input(INPUT_GET, 'orden') ?: 'titulo');
+$orden    = trim(filter_input(INPUT_GET, 'orden') ?: 'titulo');
+$sentido  = trim(filter_input(INPUT_GET, 'sentido') ?: 'ASC');
 ?>
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
@@ -69,6 +70,10 @@ $orden = trim(filter_input(INPUT_GET, 'orden') ?: 'titulo');
         header('Location: index.php');
         return;
     }
+    if (!in_array($sentido, ['ASC', 'DESC'])) {
+        header('Location: index.php');
+        return;
+    }
     $orderBy = $orden == 'genero_id' ? 'genero' : $orden;
     $pdo = conectar();
     $sent = $pdo->prepare("SELECT count(*)
@@ -91,7 +96,7 @@ $orden = trim(filter_input(INPUT_GET, 'orden') ?: 'titulo');
                                   genero_id,
                                   genero
                                   $clausulas
-                         ORDER BY $orderBy
+                         ORDER BY $orderBy $sentido
                             LIMIT :limit
                            OFFSET :offset");
     $sent->execute($params + [
@@ -103,10 +108,12 @@ $orden = trim(filter_input(INPUT_GET, 'orden') ?: 'titulo');
         <table id="tabla" class="table table-striped">
             <thead>
                 <th>Id</th>
-                <?php foreach (COLUMNAS as $k => $v): ?>
+                <?php foreach (COLUMNAS as $k => $v):
+                    $nuevoSentido = $k == $orden ? invertirSentido($sentido) : 'ASC';
+                    ?>
                     <th>
-                        <a href="<?= generaUrl($pag, $columna, $criterio, $k) ?>">
-                            <?= $v ?> <?= $k == $orden ? '<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>' : '' ?>
+                        <a href="<?= generaUrl($pag, $columna, $criterio, $k, $nuevoSentido) ?>">
+                            <?= $v ?> <?= $k == $orden ? iconoSentido($sentido) : '' ?>
                         </a>
                     </th>
                 <?php endforeach ?>
@@ -137,7 +144,7 @@ $orden = trim(filter_input(INPUT_GET, 'orden') ?: 'titulo');
         </table>
     </div>
 </div>
-<?php paginador($pag, $numPags, $columna, $criterio, $orden) ?>
+<?php paginador($pag, $numPags, $columna, $criterio, $orden, $sentido) ?>
 <div class="row">
     <div class="text-center">
         <a class="btn btn-default" href="insertar.php">Insertar una nueva película</a>

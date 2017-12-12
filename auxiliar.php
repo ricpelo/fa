@@ -518,14 +518,14 @@ function formularioConfirmarBorrado($id, $titulo)
     <?php
 }
 
-function paginador($pag, $numPags, $columna, $criterio, $orden)
+function paginador($pag, $numPags, $columna, $criterio, $orden, $sentido)
 {
     ?>
     <div class="row">
         <div class="text-center">
             <ul class="pagination">
                 <?php if ($pag > 1):
-                    $url = generaUrl($pag - 1, $columna, $criterio, $orden);
+                    $url = generaUrl($pag - 1, $columna, $criterio, $orden, $sentido);
                     ?>
                     <li>
                         <a href="<?= $url ?>" aria-label="Previous">
@@ -539,7 +539,7 @@ function paginador($pag, $numPags, $columna, $criterio, $orden)
                 <?php endif ?>
                 <?php
                 for ($p = 1; $p <= $numPags; $p++):
-                    $url = generaUrl($p, $columna, $criterio, $orden);
+                    $url = generaUrl($p, $columna, $criterio, $orden, $sentido);
                     ?>
                     <li <?= $pag == $p ? 'class="active"' : '' ?> >
                         <a href="<?= $url ?>"><?= $p ?></a>
@@ -548,7 +548,7 @@ function paginador($pag, $numPags, $columna, $criterio, $orden)
                 endfor;
                 ?>
                 <?php if ($pag < $numPags):
-                    $url = generaUrl($pag + 1, $columna, $criterio, $orden);
+                    $url = generaUrl($pag + 1, $columna, $criterio, $orden, $sentido);
                     ?>
                     <li>
                         <a href="<?= $url ?>" aria-label="Next">
@@ -566,7 +566,7 @@ function paginador($pag, $numPags, $columna, $criterio, $orden)
     <?php
 }
 
-function generaUrl($pag, $columna, $criterio, $orden)
+function generaUrl($pag, $columna, $criterio, $orden, $sentido)
 {
     $url = "index.php?pag=$pag";
     if ($columna !== '' && $criterio !== '' ) {
@@ -575,5 +575,20 @@ function generaUrl($pag, $columna, $criterio, $orden)
     if ($orden !== '') {
         $url .= "&orden=$orden";
     }
+    if ($sentido !== '') {
+        $url .= "&sentido=$sentido";
+    }
     return $url;
+}
+
+function invertirSentido(string $sentido)
+{
+    return $sentido === 'ASC' ? 'DESC' : 'ASC';
+}
+
+function iconoSentido(string $sentido)
+{
+    $upDown = $sentido === 'ASC' ? 'up' : 'down';
+    return '<span class="glyphicon glyphicon-arrow-'
+        . $upDown . ' aria-hidden="true"></span>';
 }
