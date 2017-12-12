@@ -57,6 +57,11 @@ $criterio = trim(filter_input(INPUT_GET, 'criterio'));
                 $clausulas .= "WHERE $columna = :criterio";
                 $params = [':criterio' => $criterio];
                 break;
+
+            case 'genero_id':
+                $clausulas .= "WHERE lower(genero) LIKE lower(:criterio)";
+                $params = [':criterio' => "%$criterio%"];
+                break;
         }
     }
     $pdo = conectar();
