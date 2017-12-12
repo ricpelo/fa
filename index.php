@@ -4,7 +4,8 @@ require 'auxiliar.php';
 
 cabecera('Listado de películas');
 
-$titulo = trim(filter_input(INPUT_GET, 'titulo'));
+$columna = trim(filter_input(INPUT_GET, 'columna'));
+$criterio = trim(filter_input(INPUT_GET, 'criterio'));
 ?>
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
@@ -13,9 +14,15 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
             <div class="panel-body">
                 <form action="index.php" method="get" class="form-inline">
                     <div class="form-group">
-                        <label for="titulo">Título</label>
-                        <input id="titulo" class="form-control" type="text" name="titulo"
-                               value="<?= h($titulo) ?>">
+                        <select class="form-control" name="columna">
+                            <?php foreach (COLUMNAS as $k => $v): ?>
+                                <option value="<?= $k ?>" <?= selected($k, $columna) ?> >
+                                    <?= $v ?>
+                                </option>
+                            <?php endforeach ?>
+                        </select>
+                        <input id="criterio" class="form-control" type="text" name="criterio"
+                               value="<?= h($criterio) ?>">
                     </div>
                     <input type="submit" class="btn btn-default" value="Buscar">
                 </form>
@@ -25,13 +32,37 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
 </div>
 <div class="row">
     <?php
-    $pdo = conectar();
     $clausulas = "FROM peliculas
-                  JOIN generos ON genero_id = generos.id
-                 WHERE lower(titulo) LIKE lower('%' || :titulo || '%')";
+                  JOIN generos ON genero_id = generos.id ";
+    $params = [];
+    if ($columna !== '') {
+        if (!isset(COLUMNAS[$columna])) {
+            $_SESSION['mensaje'] = 'Error: criterio incorrecto.';
+            header('Location: index.php');
+            return;
+        }
+        if ($criterio === '') {
+            header('Location: index.php');
+            return;
+        }
+        switch ($columna) {
+            case 'titulo':
+            case 'sinopsis':
+                $clausulas .= "WHERE lower($columna) LIKE lower(:criterio)";
+                $params = [':criterio' => "%$criterio%"];
+                break;
+
+            case 'anyo':
+            case 'duracion':
+                $clausulas .= "WHERE $columna = :criterio";
+                $params = [':criterio' => $criterio];
+                break;
+        }
+    }
+    $pdo = conectar();
     $sent = $pdo->prepare("SELECT count(*)
                                   $clausulas");
-    $sent->execute([':titulo' => $titulo]);
+    $sent->execute($params);
     $numFilas = $sent->fetchColumn();
     $numPags = ceil($numFilas / FPP);
     $pag = filter_input(INPUT_GET, 'pag', FILTER_VALIDATE_INT, [
@@ -52,8 +83,7 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
                          ORDER BY id
                             LIMIT :limit
                            OFFSET :offset");
-    $sent->execute([
-        ':titulo' => $titulo,
+    $sent->execute($params + [
         ':limit' => FPP,
         ':offset' => ($pag - 1) * FPP,
     ]);
@@ -94,7 +124,7 @@ $titulo = trim(filter_input(INPUT_GET, 'titulo'));
         </table>
     </div>
 </div>
-<?php paginador($pag, $numPags, $titulo) ?>
+<?php paginador($pag, $numPags, $columna, $criterio) ?>
 <div class="row">
     <div class="text-center">
         <a class="btn btn-default" href="insertar.php">Insertar una nueva película</a>

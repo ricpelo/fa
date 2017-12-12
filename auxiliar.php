@@ -8,6 +8,14 @@ const PELICULA_DEFECTO = [
     'genero_id' => '',
 ];
 
+const COLUMNAS = [
+    'titulo' => 'Título',
+    'anyo' => 'Año',
+    'sinopsis' => 'Sinopsis',
+    'duracion' => 'Duración',
+    'genero_id' => 'Género',
+];
+
 define('FPP', 4);
 
 function obtenerParametro(string $parametro, array $defecto): array
@@ -43,11 +51,11 @@ function conectar(): PDO
 
 /**
  * Busca una película a partir de su ID.
- * @param  PDO       $pdo   La conexión a la base de datos
- * @param  int       $id    El ID de la película
- * @param  array     $error El array de errores
- * @return array            La fila que contiene los datos de la película
- * @throws Exception        Si la película no existe
+ * @param  PDO       $pdo    La conexión a la base de datos
+ * @param  int       $id     El ID de la película
+ * @param  array     &$error El array de errores
+ * @return array             La fila que contiene los datos de la película
+ * @throws Exception         Si la película no existe
  */
 function buscarPelicula(PDO $pdo, int $id, array &$error): array
 {
@@ -65,9 +73,9 @@ function buscarPelicula(PDO $pdo, int $id, array &$error): array
 
 /**
  * Borra una película a partir de su ID.
- * @param  PDO   $pdo   La conexión a la base de datos
- * @param  int   $id    El ID de la película
- * @param  array $error Los mensajes de error
+ * @param  PDO   $pdo    La conexión a la base de datos
+ * @param  int   $id     El ID de la película
+ * @param  array &$error Los mensajes de error
  */
 function borrarPelicula(PDO $pdo, int $id, array &$error): void
 {
@@ -86,9 +94,9 @@ function borrarPelicula(PDO $pdo, int $id, array &$error): void
  * de filter_input(). Si el parámetro no existe, entendemos que su valor
  * también es false, con lo cual sólo tenemos que comprobar si el valor no
  * es false.
- * @param  mixed     $param El parámetro a comprobar
- * @param  array     $error El array de errores
- * @throws Exception        Si el parámetro no es correcto
+ * @param  mixed     $param  El parámetro a comprobar
+ * @param  array     &$error El array de errores
+ * @throws Exception         Si el parámetro no es correcto
  */
 function comprobarParametro($param, array &$error): void
 {
@@ -510,15 +518,14 @@ function formularioConfirmarBorrado($id, $titulo)
     <?php
 }
 
-function paginador($pag, $numPags, $titulo)
+function paginador($pag, $numPags, $columna, $criterio)
 {
     ?>
     <div class="row">
         <div class="text-center">
             <ul class="pagination">
                 <?php if ($pag > 1):
-                    $p = $pag - 1;
-                    $url = "index.php?pag=$p&titulo=$titulo";
+                    $url = generaUrl($pag - 1, $columna, $criterio);
                     ?>
                     <li>
                         <a href="<?= $url ?>" aria-label="Previous">
@@ -532,7 +539,7 @@ function paginador($pag, $numPags, $titulo)
                 <?php endif ?>
                 <?php
                 for ($p = 1; $p <= $numPags; $p++):
-                    $url = "index.php?pag=$p&titulo=$titulo";
+                    $url = generaUrl($p, $columna, $criterio);
                     ?>
                     <li <?= $pag == $p ? 'class="active"' : '' ?> >
                         <a href="<?= $url ?>"><?= $p ?></a>
@@ -541,8 +548,7 @@ function paginador($pag, $numPags, $titulo)
                 endfor;
                 ?>
                 <?php if ($pag < $numPags):
-                    $p = $pag + 1;
-                    $url = "index.php?pag=$p&titulo=$titulo";
+                    $url = generaUrl($pag + 1, $columna, $criterio);
                     ?>
                     <li>
                         <a href="<?= $url ?>" aria-label="Next">
@@ -558,4 +564,13 @@ function paginador($pag, $numPags, $titulo)
         </div>
     </div>
     <?php
+}
+
+function generaUrl($pag, $columna, $criterio)
+{
+    $url = "index.php?pag=$pag";
+    if ($columna !== '' && $criterio !== '' ) {
+        $url .= "&columna=$columna&criterio=$criterio";
+    }
+    return $url;
 }
